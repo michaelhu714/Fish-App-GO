@@ -4,11 +4,11 @@
 
 Objective: Work with your team to steal your opponents' cards, figure out your teammates' hands, and score 5 sets to win.
 # 🏁 Setup:
-Players: 2 teams of 3 (6 players total).
+- Players: 2 teams of 3 (6 players total).
 Card Sets:
-Low Suit: 2-7 of each suit.
-High Suit: 9-A of each suit.
-Eights and Jokers: All 8s and the red/black jokers
+- Low Suit: 2-7 of each suit.
+- High Suit: 9-A of each suit.
+- Eights and Jokers: All 8s and the red/black jokers
 # 🎮 Gameplay:
 Turn Rules:
 On your turn, you may ask an opponent for a card from a set you already hold.
