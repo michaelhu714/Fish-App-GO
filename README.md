@@ -15,6 +15,7 @@ Objective: Work with your team to steal your opponent's cards, figure out your t
 - Example: If you have the 2 of hearts (Low Suit), you can ask for another low heart (e.g., 3 of hearts).
 - IMPORTANT: You can only ask for cards from sets you already hold.
 - (e.g., If you only have low heart, you cannot ask for a high heart.)
+- Your turn ends once you guess incorrectly and is passed to the person you guessed incorrectly from.
 > Declaring a Set:
 - When you believe your team knows who holds all the cards in a set, you can declare.
   - If your declaration is correct, your team scores 1 point.
