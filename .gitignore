@@ -1,4 +1,2 @@
 # gitignore file
 
-src/tanay-test/*
-!src/tanay-test/*.go
