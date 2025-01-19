@@ -28,7 +28,7 @@ func main() {
 
 	fmt.Println(lowHearts, lowClubs, lowSpades, lowDiamonds, highHearts, highClubs, highSpades, highDiamonds, eightsJokers)
 
-	firstPlayerIndex := fish.RandomizeFirstPlayer(len(game.GameState), game.Rng)
+	firstPlayerIndex := fish.RandomizeFirstPlayer(len(game.GameState))
 	fish.GameInit(game.GameState[firstPlayerIndex])
 
 }
