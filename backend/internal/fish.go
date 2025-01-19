@@ -65,6 +65,52 @@ func NewGame() *Game {
 func RandomizeFirstPlayer(numPlayers int, rng *rand.Rand) int {
 	return 1
 }
+func MakeSets() (lH, lC, lS, lD, hH, hC, hS, hD, eJ []string) {
+	ranks := "23456789TJQKA"
+	suits := []string{"♥", "♣", "♠", "♦"}
+
+	for _, rank := range ranks {
+		for _, suit := range suits {
+			card := string(rank) + suit
+
+			// Low cards: 2-7
+			if rank >= '2' && rank <= '7' {
+				if suit == "♥" {
+					lH = append(lH, card)
+				} else if suit == "♣" {
+					lC = append(lC, card)
+				} else if suit == "♠" {
+					lS = append(lS, card)
+				} else if suit == "♦" {
+					lD = append(lD, card)
+				}
+			}
+
+			// High cards: 9-A
+			if rank >= '9' && (rank <= 'K' || rank == 'A') {
+				if suit == "♥" {
+					hH = append(hH, card)
+				} else if suit == "♣" {
+					hC = append(hC, card)
+				} else if suit == "♠" {
+					hS = append(hS, card)
+				} else if suit == "♦" {
+					hD = append(hD, card)
+				}
+			}
+
+			// Eights and Jokers
+			if rank == '8' {
+				eJ = append(eJ, card)
+			}
+		}
+	}
+
+	// Add Jokers to eights and jokers set
+	eJ = append(eJ, "red🃏", "black🃏")
+
+	return
+}
 
 // inital game setup (will make cleaner later)
 func GameInit(player Players) {
