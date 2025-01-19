@@ -10,12 +10,12 @@ const (
 )
 
 type Card struct {
-	suit  Suit
-	value int
+	Suit  Suit
+	Value int
 }
 
 type Player struct {
-	name  string
-	team  int
-	cards []Card
+	Name  string `json:"name"`
+	Team  int    `json:"team,omitempty"`
+	Cards []Card
 }
