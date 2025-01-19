@@ -1,30 +1,26 @@
-package main
+package fish
 
 import (
 	"fmt"
-	"math/rand"
 	"time"
+
+	"math/rand"
 )
 
-func main() {
-
-	game := newGame()
-	fmt.Println(game)
-}
-
 // struct to represent each player
-type Player struct {
+type Players struct {
 	name  string
-	team  int
+	team  string
 	cards []string // cards in players hand
 }
 
 // struct to represent game state
 type Game struct {
-	Players []Player // slice of Player structs ^ in the game
+	GameState []Players // slice of Players structs ^ in the game
+	Rng       *rand.Rand
 }
 
-func newGame() *Game {
+func NewGame() *Game {
 	deck := []string{}
 	ranks := "23456789TJQKA"
 	suits := []string{"♠", "♥", "♦", "♣"}
@@ -38,13 +34,45 @@ func newGame() *Game {
 	deck = append(deck, "red🃏", "black🃏")
 	// figure out a better representation for jokers later
 
-	//shuffle deck for distrbution
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(deck), func(i, j int) { deck[i], deck[j] = deck[j], deck[i] })
+	// shuffle deck for distrbution
+	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+	fmt.Println("Random generator created:", rng)
+	rng.Shuffle(len(deck), func(i, j int) { deck[i], deck[j] = deck[j], deck[i] })
 
-	fmt.Println(deck)
-	return &Game{
-		Players: []Player{}, // Initialize with no players for now
-
+	// create 6 players
+	player := []Players{
+		{name: "Player 1, ", team: "Team 1"},
+		{name: "Player 2, ", team: "Team 1"},
+		{name: "Player 3, ", team: "Team 1"},
+		{name: "Player 4, ", team: "Team 2"},
+		{name: "Player 5, ", team: "Team 2"},
+		{name: "Player 6, ", team: "Team 2"},
 	}
+
+	// deal 9 cards to each player
+	for i := 0; i < 9; i++ {
+		for j := range player {
+			player[j].cards = append(player[j].cards, deck[0])
+			// update deck to get rid of first element
+			deck = deck[1:]
+		}
+	}
+
+	return &Game{GameState: player}
+}
+
+// randommizes first player
+func RandomizeFirstPlayer(numPlayers int, rng *rand.Rand) int {
+	return 1
+}
+
+// inital game setup (will make cleaner later)
+func GameInit(player Players) {
+	// display first player to go
+	fmt.Println(player.name + player.team + " has the first move.")
+	fmt.Println("Your Cards: ", player.cards)
+	fmt.Print("It's your turn! \nChoose a card: ")
+	var card string
+	fmt.Scan(&card)
+	fmt.Printf("You choose the %s", card)
 }
