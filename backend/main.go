@@ -12,6 +12,7 @@ import (
 const portNum string = ":8000"
 
 func main() {
+
 	http.HandleFunc("/", api.Home)
 	http.HandleFunc("/new", api.New)
 	fmt.Printf("Server started on port %s\n", portNum)
@@ -22,6 +23,10 @@ func main() {
 
 	game := fish.NewGame()
 	fmt.Println(game)
+	// generate the sets for use later
+	lowHearts, lowClubs, lowSpades, lowDiamonds, highHearts, highClubs, highSpades, highDiamonds, eightsJokers := fish.MakeSets()
+
+	fmt.Println(lowHearts, lowClubs, lowSpades, lowDiamonds, highHearts, highClubs, highSpades, highDiamonds, eightsJokers)
 
 	firstPlayerIndex := fish.RandomizeFirstPlayer(len(game.GameState), game.Rng)
 	fish.GameInit(game.GameState[firstPlayerIndex])
