@@ -17,5 +17,5 @@ type Card struct {
 type Player struct {
 	Name  string `json:"name"`
 	Team  int    `json:"team,omitempty"`
-	Cards []Card
+	Cards []Card `json:"cards,omitempty"`
 }
