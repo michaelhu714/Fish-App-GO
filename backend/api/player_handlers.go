@@ -21,6 +21,7 @@ func createPlayerHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 	}
 	player.Cards = make([]types.Card, 0)
+	player.Team = -1
 	response := fmt.Sprintf("recieved: name: %s", player.Name)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
