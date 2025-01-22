@@ -1,4 +1,4 @@
-package fish
+/*package fish
 
 import (
 	"fmt"
@@ -47,4 +47,4 @@ func newGame() *Game {
 		Players: []Player{}, // Initialize with no players for now
 
 	}
-}
+}*/

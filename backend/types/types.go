@@ -21,7 +21,7 @@ type Player struct {
 }
 
 type Game struct {
-	Players      []Player
+	Players      []*Player
 	teamOneScore int
 	teamTwoScore int
 }
