@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/michaelhu714/Fish-App-GO/api"
 	"log"
 	"net/http"
+
+	"github.com/michaelhu714/Fish-App-GO/api"
+	fish "github.com/michaelhu714/Fish-App-GO/internal"
 )
 
 const portNum string = ":8000"
@@ -17,4 +19,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	game := fish.NewGame()
+	fmt.Println(game)
+
+	firstPlayerIndex := fish.RandomizeFirstPlayer(len(game.GameState), game.Rng)
+	fish.GameInit(game.GameState[firstPlayerIndex])
+
 }
