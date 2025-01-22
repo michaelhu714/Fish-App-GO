@@ -18,6 +18,10 @@ func GetPlayer(name string) (*types.Player, error) {
 	return nil, nil // not found error
 }
 
-func AssignTeam(p *types.Player, tn int) {
+func AssignTeam(p *types.Player, tn int) error {
+	if tn != 1 || tn != 2 {
+		return nil // invalid team error
+	}
 	p.Team = tn
+	return nil
 }

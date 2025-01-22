@@ -21,7 +21,6 @@ func createPlayerHandler(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&pr)
 	if err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
-		return
 	}
 	fish.CreatePlayer(pr.Name)
 	response := fmt.Sprintf("recieved: name: %s", pr.Name)
@@ -49,7 +48,11 @@ func joinTeamHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
-	fish.AssignTeam(p, atr.Team)
+	err = fish.AssignTeam(p, atr.Team)
+	if err != nil {
+		http.Error(w, "Invalid team", http.StatusBadRequest)
+		return
+	}
 	response := fmt.Sprintf("recieved: name: %s, team: %d", atr.Name, atr.Team)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
