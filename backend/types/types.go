@@ -27,10 +27,10 @@ type Game struct {
 }
 
 type CreatePlayerReq struct {
-	name string
+	Name string
 }
 
 type AssignTeamReq struct {
-	name string
-	team int
+	Name string
+	Team int
 }
