@@ -19,3 +19,9 @@ type Player struct {
 	Team  int    `json:"team,omitempty"`
 	Cards []Card `json:"cards,omitempty"`
 }
+
+type Game struct {
+	Players      []Player
+	teamOneScore int
+	teamTwoScore int
+}

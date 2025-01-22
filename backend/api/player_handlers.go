@@ -27,3 +27,12 @@ func createPlayerHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"message":` + response + `"}`))
 }
+
+func joinTeamHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		fmt.Printf("Invalid request\n")
+		return
+	}
+	defer r.Body.Close()
+}
