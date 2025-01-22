@@ -15,13 +15,22 @@ type Card struct {
 }
 
 type Player struct {
-	Name  string `json:"name"`
-	Team  int    `json:"team,omitempty"`
-	Cards []Card `json:"cards,omitempty"`
+	Name  string
+	Team  int
+	Cards []Card
 }
 
 type Game struct {
 	Players      []*Player
 	teamOneScore int
 	teamTwoScore int
+}
+
+type CreatePlayerReq struct {
+	name string
+}
+
+type AssignTeamReq struct {
+	name string
+	team int
 }
