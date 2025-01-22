@@ -34,3 +34,8 @@ type AssignTeamReq struct {
 	Name string
 	Team int
 }
+
+type ShuffleTeamReq struct {
+	filler  string // assume these are gonna hold smth, idk what they are rn
+	filler1 string
+}

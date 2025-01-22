@@ -2,6 +2,8 @@ package fish
 
 import (
 	"github.com/michaelhu714/Fish-App-GO/types"
+	"golang.org/x/exp/slices"
+	"math/rand"
 )
 
 func CreatePlayer(name string) {
@@ -24,4 +26,28 @@ func AssignTeam(p *types.Player, tn int) error {
 	}
 	p.Team = tn
 	return nil
+}
+
+func ShuffleTeams() {
+	countOne := 0
+	countZero := 0
+	usedSlice := make([]int, len(g.Players))
+	for p := range g.Players {
+		if countZero == len(g.Players)/2 {
+			p.Team = 1
+			countOne++
+		} else if countOne == len(g.Players)/2+1 {
+			p.Team = 0
+			countZero++
+		} else {
+			rand := rand.Int31n(2)
+			p.Team = rand
+			if rand == 0 {
+				countZero++
+			} else {
+				countOne++
+			}
+		}
+	}
+
 }
