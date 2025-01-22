@@ -17,7 +17,7 @@ type Players struct {
 // struct to represent game state
 type Game struct {
 	GameState []Players // slice of Players structs ^ in the game
-	Rng       *rand.Rand
+
 }
 
 func NewGame() *Game {
@@ -36,7 +36,6 @@ func NewGame() *Game {
 
 	// shuffle deck for distrbution
 	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
-	fmt.Println("Random generator created:", rng)
 	rng.Shuffle(len(deck), func(i, j int) { deck[i], deck[j] = deck[j], deck[i] })
 
 	// create 6 players
@@ -62,8 +61,59 @@ func NewGame() *Game {
 }
 
 // randommizes first player
-func RandomizeFirstPlayer(numPlayers int, rng *rand.Rand) int {
-	return 1
+func RandomizeFirstPlayer(numPlayers int) int {
+
+	// seed the random number generator
+	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	// generate a random number between 1 and numPlayers
+	return rng.Intn(numPlayers) + 1
+}
+func MakeSets() (lH, lC, lS, lD, hH, hC, hS, hD, eJ []string) {
+	ranks := "23456789TJQKA"
+	suits := []string{"♥", "♣", "♠", "♦"}
+
+	for _, rank := range ranks {
+		for _, suit := range suits {
+			card := string(rank) + suit
+
+			// low cards: 2-7
+			if rank >= '2' && rank <= '7' {
+				if suit == "♥" {
+					lH = append(lH, card)
+				} else if suit == "♣" {
+					lC = append(lC, card)
+				} else if suit == "♠" {
+					lS = append(lS, card)
+				} else if suit == "♦" {
+					lD = append(lD, card)
+				}
+			}
+
+			// high cards: 9-A
+			if rank >= '9' && (rank <= 'K' || rank == 'A') {
+				if suit == "♥" {
+					hH = append(hH, card)
+				} else if suit == "♣" {
+					hC = append(hC, card)
+				} else if suit == "♠" {
+					hS = append(hS, card)
+				} else if suit == "♦" {
+					hD = append(hD, card)
+				}
+			}
+
+			// eights and Jokers
+			if rank == '8' {
+				eJ = append(eJ, card)
+			}
+		}
+	}
+
+	// add Jokers to eights and jokers set
+	eJ = append(eJ, "red🃏", "black🃏")
+
+	return
 }
 
 // inital game setup (will make cleaner later)
