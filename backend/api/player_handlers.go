@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/michaelhu714/Fish-App-GO/types"
+	"github.com/michaelhu714/Fish-App-GO/internal/fish"
 	"net/http"
 )
 
@@ -14,15 +14,14 @@ func createPlayerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	var player types.Player
+	var pn string
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&player)
+	err := decoder.Decode(&pn)
 	if err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 	}
-	player.Cards = make([]types.Card, 0)
-	player.Team = -1
-	response := fmt.Sprintf("recieved: name: %s", player.Name)
+	fish.CreatePlayer(pn)
+	response := fmt.Sprintf("recieved: name: %s", pn)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"message":` + response + `"}`))
