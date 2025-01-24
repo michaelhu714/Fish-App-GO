@@ -51,13 +51,9 @@ func ShuffleTeams() {
 
 }
 
-func validatePick(p types.Player, cr types.Card) bool {
-	_, exists := p.Cards[cr]
-	return exists
-}
-
 func PickCard(p1 types.Player, p2 types.Player, c types.Card) error {
-	if validatePick(p2, c) {
+	_, exists := p2.Cards[c]
+	if !exists {
 		return nil // this should return error
 	}
 	delete(p2.Cards, c)
