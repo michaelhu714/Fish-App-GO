@@ -39,3 +39,9 @@ type ShuffleTeamReq struct {
 	filler  string // assume these are gonna hold smth, idk what they are rn
 	filler1 string
 }
+
+type PickCardReq struct {
+	P1Name string
+	P2Name string
+	Card   Card
+}
