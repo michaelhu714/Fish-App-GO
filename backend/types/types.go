@@ -17,7 +17,7 @@ type Card struct {
 type Player struct {
 	Name  string
 	Team  int
-	Cards []Card
+	Cards map[Card]Card
 }
 
 type Game struct {

@@ -2,7 +2,6 @@ package fish
 
 import (
 	"github.com/michaelhu714/Fish-App-GO/types"
-	"golang.org/x/exp/slices"
 	"math/rand"
 )
 
@@ -50,4 +49,23 @@ func ShuffleTeams() {
 		}
 	}
 
+}
+
+func validatePick(p types.Player, cr types.Card) bool {
+	for i := range len(p.Cards) {
+		if p.Cards[i] == cr {
+			return true
+		}
+	}
+	return false
+}
+
+func removeCardFromPlayer(p types.Player, c types.Card) {
+
+}
+
+func PickCard(p1 types.Player, p2 types.Player, c types.Card) error {
+	if validatePick(p2, c) {
+		return nil // this should return error
+	}
 }
