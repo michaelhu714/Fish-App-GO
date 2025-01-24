@@ -26,8 +26,8 @@ func PickCardHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Player doesn't exist", http.StatusBadRequest)
 	}
-	fish.PickCard(fish.GetPlayer(pcr.P1Name), fish.GetPlayer(pcr.P2Name), pcr.Card)
-	response := fmt.Sprintf("recieved: name: %s", pr.Name)
+	fish.PickCard(p1, p2, pcr.Card)
+	response := fmt.Sprintf("player %s took card {%d, %s} from player %s", pcr.P1Name, pcr.Card.Value, pcr.Card.Suit, pcr.P2Name)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"message":` + response + `"}`))
