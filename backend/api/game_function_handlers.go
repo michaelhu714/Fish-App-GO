@@ -15,6 +15,18 @@ func PickCardHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
+	var pcr types.PickCardReq
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&pcr)
+	if err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+	}
+	p1, err := fish.GetPlayer(pcr.P1Name)
+	p2, err := fish.GetPlayer(pcr.P1Name)
+	if err != nil {
+		http.Error(w, "Player doesn't exist", http.StatusBadRequest)
+	}
+	fish.PickCard(fish.GetPlayer(pcr.P1Name), fish.GetPlayer(pcr.P2Name), pcr.Card)
 	response := fmt.Sprintf("recieved: name: %s", pr.Name)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
