@@ -51,12 +51,12 @@ func ShuffleTeams() {
 
 }
 
-func PickCard(p1 types.Player, p2 types.Player, c types.Card) error {
+func PickCard(p1 types.Player, p2 types.Player, c types.Card) (types.Player, error) {
 	_, exists := p2.Cards[c]
 	if !exists {
-		return nil // this should return error
+		return p2, nil // this should return error
 	}
 	delete(p2.Cards, c)
 	p1.Cards[c] = c
-	return nil
+	return p1, nil
 }
