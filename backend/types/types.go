@@ -12,6 +12,7 @@ const (
 type Card struct {
 	Suit  Suit
 	Value int
+	Set   *map[Card]Card
 }
 
 type Player struct {

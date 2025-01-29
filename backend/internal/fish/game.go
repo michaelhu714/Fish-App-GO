@@ -1,6 +1,7 @@
 package fish
 
 import (
+	"github.com/michaelhu714/Fish-App-GO/internal/util"
 	"github.com/michaelhu714/Fish-App-GO/types"
 	"math/rand"
 )
@@ -50,7 +51,14 @@ func ShuffleTeams() {
 	}
 }
 
+func validatePick(p1 *types.Player, c types.Card) bool {
+	return len(util.Intersection(p1.Cards, *c.Set)) == 0
+}
+
 func PickCard(p1 *types.Player, p2 *types.Player, c types.Card) (*types.Player, error) {
+	if !validatePick(p1, c) {
+		return nil, nil // this should return an error
+	}
 	_, exists := p2.Cards[c]
 	if !exists {
 		return p2, nil // this should return error
