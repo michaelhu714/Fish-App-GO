@@ -12,12 +12,13 @@ const (
 type Card struct {
 	Suit  Suit
 	Value int
+	Set   *map[Card]Card
 }
 
 type Player struct {
 	Name  string
 	Team  int
-	Cards []Card
+	Cards map[Card]Card
 }
 
 type Game struct {
@@ -38,4 +39,10 @@ type AssignTeamReq struct {
 type ShuffleTeamReq struct {
 	filler  string // assume these are gonna hold smth, idk what they are rn
 	filler1 string
+}
+
+type PickCardReq struct {
+	P1Name string
+	P2Name string
+	Card   Card
 }
