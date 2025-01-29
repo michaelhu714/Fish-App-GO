@@ -48,7 +48,6 @@ func ShuffleTeams() {
 			}
 		}
 	}
-
 }
 
 func PickCard(p1 *types.Player, p2 *types.Player, c types.Card) (*types.Player, error) {
