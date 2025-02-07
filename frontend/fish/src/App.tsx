@@ -23,7 +23,12 @@ function App() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <button onClick={() => sendMessage(input)}>Send</button>
+        <button onClick={() => {
+          sendMessage(input);
+          setInput("");
+        }}>
+          Send
+        </button>
       </div>
     </div>
   )
