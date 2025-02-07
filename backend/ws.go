@@ -20,6 +20,23 @@ func handleConnection(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 	fmt.Println("Client Connected", conn.RemoteAddr())
+	readLoop(conn)
+}
+
+func readLoop(conn *websocket.Conn) {
+	for {
+		msgType, msg, err := conn.ReadMessage()
+		if err != nil {
+			fmt.Println("Error read:", err)
+			continue
+		}
+		fmt.Printf("Recieved: %s\n", msg)
+		err = conn.WriteMessage(msgType, msg)
+		if err != nil {
+			fmt.Println("Error write:", err)
+			continue
+		}
+	}
 }
 
 func main() {
