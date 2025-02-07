@@ -6,6 +6,10 @@ function Home() {
   return (
     <div>
       <h1>Home Page</h1>
+      <div>
+        <p>Enter room name</p>
+        <input type="text" />
+      </div>
       <button onClick={() => navigate("/room")}>Go to Room</button>
     </div>
   )
