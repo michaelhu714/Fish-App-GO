@@ -12,29 +12,37 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+var conns map[*websocket.Conn]bool = make(map[*websocket.Conn]bool)
+
 func handleConnection(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Println("Error ugprading connection", err)
 		return
 	}
-	defer conn.Close()
+	conns[conn] = true
 	fmt.Println("Client Connected", conn.RemoteAddr())
-	readLoop(conn)
+	go readLoop(conn)
 }
 
 func readLoop(conn *websocket.Conn) {
+	defer conn.Close()
 	for {
 		msgType, msg, err := conn.ReadMessage()
 		if err != nil {
 			fmt.Println("Error read:", err)
-			continue
+			delete(conns, conn)
+			break
 		}
 		fmt.Printf("Recieved: %s\n", msg)
-		err = conn.WriteMessage(msgType, msg)
+		fullMsg := fmt.Sprintf("%s: %s", conn.RemoteAddr(), msg)
+		for c := range conns {
+			err = c.WriteMessage(msgType, []byte(fullMsg))
+		}
 		if err != nil {
 			fmt.Println("Error write:", err)
-			continue
+			delete(conns, conn)
+			break
 		}
 	}
 }
