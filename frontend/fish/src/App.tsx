@@ -1,21 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { useWebSocket } from './hooks/useWebSocket'
+import { useState } from 'react';
+import React from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
-  useWebSocket("ws://localhost:8080/ws");
+  const { messages, sendMessage } = useWebSocket("ws://localhost:8080/ws");
+  const [input, setInput] = useState("");
   return (
-    <>
+    <div>
+      <h1>WebSocket Test</h1>
+      <h2>Messages</h2>
       <div>
         <ul>
+          {messages.map((msg: string, index: number) => (
+            <li key={index}>{msg}</li>
+          ))}
         </ul>
-        <input type='text' />
-        <button type='button'>Send msg</button>
       </div>
-    </>
+      <div>
+        <input
+          type='text'
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button onClick={() => sendMessage(input)}>Send</button>
+      </div>
+    </div>
   )
 }
 
