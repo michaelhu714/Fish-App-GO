@@ -1,12 +1,34 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { useWebSocket } from '../hooks/useWebSocket'
 import { useState } from "react";
 
 function Home() {
   const navigate = useNavigate();
-  const { sendMessage } = useWebSocket("ws://localhost:8080/ws");
   const [input, setInput] = useState("");
+
+  const joinRoom = async () => {
+    if (!input.trim()) {
+      alert("Please enter a room name");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/api/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ room: input }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to join room");
+      }
+      const data = await response.json();
+      navigate(`/room?room=${encodeURIComponent(data.room)}`);
+    } catch (error) {
+      console.error("Error joining room:", error);
+      alert("Error joining room. Try again.");
+    }
+  }
+
   return (
     <div>
       <h1>Home Page</h1>
@@ -17,10 +39,7 @@ function Home() {
           value={input}
           onChange={(e) => setInput(e.target.value)} />
       </div>
-      <button onClick={() => {
-        sendMessage("JOIN", input);
-        navigate("/room");
-      }}>Go to Room</button>
+      <button onClick={joinRoom}>Go to Room</button>
     </div >
   )
 }

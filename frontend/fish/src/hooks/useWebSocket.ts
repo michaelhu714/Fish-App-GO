@@ -16,9 +16,10 @@ export function useWebSocket(url: string) {
 		};
 
 		socket.onmessage = (event) => {
+			console.log(event.data);
 			const data = JSON.parse(event.data);
-			console.log("Recieved Message: " + data);
-			setMessages((prev) => [...prev, data]);
+			console.log("Recieved Message: " + data.content);
+			setMessages((prev) => [...prev, data.content]);
 		}
 
 		setWs(socket);
