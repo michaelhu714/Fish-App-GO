@@ -11,7 +11,7 @@ function Room() {
       <h2>Messages</h2>
       <div>
         <ul>
-          {messages.map((msg: string, index: number) => (
+          {messages.filter(m => JSON.parse(m).type == "CHAT").map((msg: string, index: number) => (
             <li key={index}>{msg}</li>
           ))}
         </ul>
@@ -23,7 +23,7 @@ function Room() {
           onChange={(e) => setInput(e.target.value)}
         />
         <button onClick={() => {
-          sendMessage("chat", input);
+          sendMessage("CHAT", input);
           setInput("");
         }}>
           Send
