@@ -16,8 +16,9 @@ export function useWebSocket(url: string) {
 		};
 
 		socket.onmessage = (event) => {
-			console.log("Recieved Message: " + event.data);
-			setMessages((prev) => [...prev, event.data]);
+			const data = JSON.parse(event.data);
+			console.log("Recieved Message: " + data);
+			setMessages((prev) => [...prev, data]);
 		}
 
 		setWs(socket);
@@ -26,9 +27,13 @@ export function useWebSocket(url: string) {
 		};
 	}, [url]);
 
-	const sendMessage = (msg: string) => {
+	const sendMessage = (type: string, content: string) => {
 		if (ws && ws.readyState === WebSocket.OPEN) {
-			ws.send(msg);
+			const message = {
+				type: type,
+				content: content
+			}
+			ws.send(JSON.stringify(message));
 		} else {
 			console.log("WebSocket is closed");
 		}

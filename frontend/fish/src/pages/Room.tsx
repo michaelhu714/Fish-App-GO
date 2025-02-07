@@ -23,7 +23,7 @@ function Room() {
           onChange={(e) => setInput(e.target.value)}
         />
         <button onClick={() => {
-          sendMessage(input);
+          sendMessage("chat", input);
           setInput("");
         }}>
           Send
