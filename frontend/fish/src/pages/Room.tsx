@@ -1,5 +1,5 @@
-import React from 'react';
 import { useWebSocket } from '../hooks/useWebSocket'
+import { useNavigate } from "react-router";
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 
@@ -9,6 +9,7 @@ function Room() {
   const wsURL = `ws://localhost:8080/ws?room=${encodeURIComponent(roomName!)}`
   const { messages, sendMessage } = useWebSocket(wsURL);
   const [input, setInput] = useState("");
+  const navigate = useNavigate();
   return (
     <div>
       <h1>Room</h1>
@@ -32,6 +33,10 @@ function Room() {
         }}>
           Send
         </button>
+        <button onClick={() => {
+          sendMessage("LEAVE", "");
+          navigate("/");
+        }}>Leave</button>
       </div>
     </div>
   )
