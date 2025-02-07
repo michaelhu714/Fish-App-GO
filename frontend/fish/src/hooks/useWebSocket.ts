@@ -9,7 +9,6 @@ export function useWebSocket(url: string) {
 
 		socket.onopen = () => {
 			console.log("WebSocket initialized");
-			socket.send("Hello from Client!");
 		}
 
 		socket.onclose = () => {
