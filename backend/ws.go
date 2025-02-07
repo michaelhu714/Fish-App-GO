@@ -55,7 +55,7 @@ func readLoop(conn *websocket.Conn) {
 		case "JOIN":
 			handleJoin(recievedMsg.Content, conn)
 		case "CHAT":
-			handleChat(recievedMsg.Content, conn)
+			handleChat(recievedMsg, conn)
 		case "LEAVE":
 			handleLeave(conn)
 		default:
@@ -67,13 +67,15 @@ func readLoop(conn *websocket.Conn) {
 func handleJoin(content string, conn *websocket.Conn) {
 	client := conns[conn]
 	client.room = content
+	fmt.Printf("client: %s, room: %s\n", client.conn.RemoteAddr(), client.room)
 }
 
-func handleChat(content string, conn *websocket.Conn) {
-	fullMsg := fmt.Sprintf("%s: %s", conn.RemoteAddr())
+func handleChat(msg Message, conn *websocket.Conn) {
+	newContent := fmt.Sprintf("%s: %s", conn.RemoteAddr(), msg.Content)
+	newMsg := Message{Type: msg.Type, Content: newContent}
 	for c := range conns {
 		if conns[c].room == conns[conn].room {
-			err := c.WriteJSON(fullMsg)
+			err := c.WriteJSON(newMsg)
 			if err != nil {
 				fmt.Println("Error write:", err)
 				delete(conns, conn)
