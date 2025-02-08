@@ -46,3 +46,22 @@ type PickCardReq struct {
 	P2Name string
 	Card   Card
 }
+
+type DeclareReq struct {
+	CurrentPlayer string
+	Set           string
+}
+
+type Players struct {
+	name  string
+	team  string
+	cards []string // cards in players hand
+
+}
+
+// struct to represent game state
+type Game1 struct {
+	GameState   []Players // slice of Players structs ^ in the game
+	Team1Points int
+	Team2Points int
+}
