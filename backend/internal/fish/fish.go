@@ -9,7 +9,7 @@ import (
 
 // struct to represent each player
 type Players struct {
-	name  string
+	Name  string
 	team  string
 	cards []string // cards in players hand
 
@@ -42,12 +42,12 @@ func NewGame() *Game {
 
 	// create 6 players
 	player := []Players{
-		{name: "Player 1, ", team: "Team 1"},
-		{name: "Player 2, ", team: "Team 1"},
-		{name: "Player 3, ", team: "Team 1"},
-		{name: "Player 4, ", team: "Team 2"},
-		{name: "Player 5, ", team: "Team 2"},
-		{name: "Player 6, ", team: "Team 2"},
+		{Name: "Player 1, ", team: "Team 1"},
+		{Name: "Player 2, ", team: "Team 1"},
+		{Name: "Player 3, ", team: "Team 1"},
+		{Name: "Player 4, ", team: "Team 2"},
+		{Name: "Player 5, ", team: "Team 2"},
+		{Name: "Player 6, ", team: "Team 2"},
 	}
 
 	// deal 9 cards to each player
@@ -122,7 +122,7 @@ func MakeSets() (lH, lC, lS, lD, hH, hC, hS, hD, eJ []string) {
 func GameInit(player Players, game *Game) {
 	var choice string
 
-	fmt.Println(player.name + player.team + " has the first move.")
+	fmt.Println(player.Name + player.team + " has the first move.")
 	fmt.Println("Your Cards:", player.cards)
 
 	// loop until a valid choice is made
@@ -133,7 +133,7 @@ func GameInit(player Players, game *Game) {
 		choice = strings.ToUpper(choice) // normalize input to uppercase
 
 		if choice == "D" {
-			Declare(player, game)
+			Declare1(player, game)
 			break
 		} else if choice == "C" {
 			fmt.Println("You chose to pick a card") // replace with actual logic
@@ -144,7 +144,7 @@ func GameInit(player Players, game *Game) {
 	}
 }
 
-func Declare(currentPlayer Players, game *Game) {
+func Declare1(currentPlayer Players, game *Game) {
 	var declaringSet string
 	var team []Players
 
@@ -207,7 +207,7 @@ func promptDeclare(currentPlayer Players, team []Players, set []string, game *Ga
 	for _, card := range set {
 		fmt.Printf("\nYou can select from the following teammates (Select teammate 1, 2, 3, or 4 for yourself):\n") // %v", team) if you ever want to display cards
 		for i, mate := range team {
-			fmt.Printf("%d: %s (%s)\n", i+1, mate.name, mate.team)
+			fmt.Printf("%d: %s (%s)\n", i+1, mate.Name, mate.team)
 		}
 		fmt.Printf("Your card is %s, select which teammate has it: ", card)
 
@@ -295,5 +295,77 @@ func CheckWin(game *Game) {
 		fmt.Println("Team 1 wins the game!")
 	} else if game.Team2Points >= 5 {
 		fmt.Println("Team 2 wins the game!")
+	}
+}
+
+func Declare(player *Players, set string, game *Game) error {
+	setCards, err := GetSetCards(set)
+	if err != nil {
+		return err
+	}
+
+	team := GetTeammates(player, game)
+	if !ValidateDeclaration(team, setCards) {
+		return fmt.Errorf("invalid declaration")
+	}
+
+	UpdateScore(player.team, game)
+	return nil
+}
+
+func GetSetCards(set string) ([]string, error) {
+	lH, lC, lS, lD, hH, hC, hS, hD, eJ := MakeSets()
+	switch set {
+	case "lH":
+		return lH, nil
+	case "lC":
+		return lC, nil
+	case "lS":
+		return lS, nil
+	case "lD":
+		return lD, nil
+	case "hH":
+		return hH, nil
+	case "hC":
+		return hC, nil
+	case "hS":
+		return hS, nil
+	case "hD":
+		return hD, nil
+	case "eJ":
+		return eJ, nil
+	default:
+		return nil, fmt.Errorf("invalid set name")
+	}
+}
+
+func GetTeammates(player *Players, game *Game) []*Players {
+	var team []*Players
+	for i := range game.GameState {
+		if game.GameState[i].team == player.team {
+			team = append(team, &game.GameState[i])
+		}
+	}
+	return team
+}
+
+func ValidateDeclaration(team []*Players, set []string) bool {
+	for _, p := range team {
+		for _, card := range p.cards {
+			for _, sCard := range set {
+				if card == sCard {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func UpdateScore(team string, game *Game) {
+	if team == "Team 1" {
+		game.Team1Points++
+	} else {
+		game.Team2Points++
 	}
 }

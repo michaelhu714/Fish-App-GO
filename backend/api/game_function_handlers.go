@@ -3,9 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/michaelhu714/Fish-App-GO/internal/fish"
 	"github.com/michaelhu714/Fish-App-GO/types"
-	"net/http"
 )
 
 func PickCardHandler(w http.ResponseWriter, r *http.Request) {
@@ -31,4 +32,52 @@ func PickCardHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(`{"message":` + response + `"}`))
+}
+
+func DeclareHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		fmt.Printf("Invalid request\n")
+		return
+	}
+	defer r.Body.Close()
+
+	var req types.DeclareReq
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&req)
+	if err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+	// fetch the current player and game state
+	game := fish.NewGame()
+	if game == nil {
+		http.Error(w, "Game state not found", http.StatusInternalServerError)
+		return
+	}
+
+	// find the current player
+	var currentPlayer *fish.Players
+	for i := range game.GameState {
+		if game.GameState[i].Name == req.CurrentPlayer {
+			currentPlayer = &game.GameState[i]
+			break
+		}
+	}
+
+	if currentPlayer == nil {
+		http.Error(w, "Player not found", http.StatusNotFound)
+		return
+	}
+
+	// Call Declare and handle errors
+	if err := fish.Declare(currentPlayer, req.Set, game); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	response := fmt.Sprintf("Declaration processed. Current Score -> Team 1: %d, Team 2: %d", game.Team1Points, game.Team2Points)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"message":"` + response + `"}`))
 }
