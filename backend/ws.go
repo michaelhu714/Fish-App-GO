@@ -24,6 +24,18 @@ type Room struct {
 	Clients map[*websocket.Conn]bool
 }
 
+type Event struct {
+	Name   string
+	Room   *Room
+	Client *websocket.Conn
+	Data   interface{}
+}
+
+type PubSub struct {
+	subscribers map[string][]chan Event
+	mu          sync.Mutex
+}
+
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -32,6 +44,24 @@ var upgrader = websocket.Upgrader{
 
 var rooms map[string]*Room
 var roomsMutex sync.Mutex
+
+func NewPubSub() *PubSub {
+	return &PubSub{subscribers: make(map[string][]chan Event)}
+}
+
+func (ps *PubSub) Subscribe(event string, ch chan Event) {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	ps.subscribers[event] = append(ps.subscribers[event], ch)
+}
+
+func (ps *PubSub) Publish(event Event) {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	for _, ch := range ps.subscribers[event.Name] {
+		ch <- event
+	}
+}
 
 func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +83,7 @@ func initServer() {
 	roomsMutex = sync.Mutex{}
 }
 
-func handleSocket(w http.ResponseWriter, r *http.Request) {
+func HandleSocket(w http.ResponseWriter, r *http.Request, ps *PubSub) {
 	fmt.Println("URL:", r.URL)
 	roomName := r.URL.Query().Get("room")
 	fmt.Println("room:", roomName)
@@ -64,10 +94,10 @@ func handleSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("Client Connected", conn.RemoteAddr())
 	rooms[roomName].Clients[conn] = true
-	go readLoop(conn, rooms[roomName])
+	go readLoop(conn, rooms[roomName], ps)
 }
 
-func readLoop(conn *websocket.Conn, room *Room) {
+func readLoop(conn *websocket.Conn, room *Room, ps *PubSub) {
 	defer conn.Close()
 	for {
 		var recievedMsg Message
@@ -77,20 +107,25 @@ func readLoop(conn *websocket.Conn, room *Room) {
 			delete(room.Clients, conn)
 			break
 		}
-		fmt.Printf("Recieved: %s\n", recievedMsg)
-		fmt.Printf("msg type: %s, content: %s\n", recievedMsg.Type, recievedMsg.Content)
-		switch recievedMsg.Type {
-		case "CHAT":
-			handleChat(recievedMsg, conn, room)
-		case "LEAVE":
-			handleLeave(conn, room)
-		default:
-			fmt.Println("?????")
-		}
+		fmt.Printf("LOG: MsgType is %s\n", recievedMsg.Type)
+		event := Event{Name: recievedMsg.Type, Room: room, Client: conn, Data: recievedMsg}
+		ps.Publish(event)
 	}
 }
 
-func handleChat(msg Message, conn *websocket.Conn, room *Room) {
+func HandleChat(ch chan Event) {
+	for event := range ch {
+		data, ok := event.Data.(Message)
+		if !ok {
+			fmt.Println("Invalid data format")
+			return
+		}
+		fmt.Println("Sending message")
+		broadcast(data, event.Client, event.Room)
+	}
+}
+
+func broadcast(msg Message, conn *websocket.Conn, room *Room) {
 	newContent := fmt.Sprintf("%s: %s", conn.RemoteAddr(), msg.Content)
 	newMsg := Message{Type: msg.Type, Content: newContent}
 	for c := range room.Clients {
@@ -132,14 +167,33 @@ func handleJoin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func handleLeave(conn *websocket.Conn, room *Room) {
+func HandleLeave(ch chan Event) {
+	for event := range ch {
+		fmt.Println("Sending message")
+		leave(event.Client, event.Room)
+	}
+}
+
+func leave(conn *websocket.Conn, room *Room) {
 	fmt.Printf("client %s leaving room %s\n", conn.RemoteAddr(), room.Name)
 	delete(room.Clients, conn)
 }
 
 func main() {
 	initServer()
-	http.HandleFunc("/ws", handleSocket)
+	ps := NewPubSub()
+	chatChan := make(chan Event)
+	leaveChan := make(chan Event)
+
+	ps.Subscribe("CHAT", chatChan)
+	ps.Subscribe("LEAVE", leaveChan)
+
+	go HandleChat(chatChan)
+	go HandleLeave(leaveChan)
+
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		HandleSocket(w, r, ps)
+	})
 	http.HandleFunc("/api/join", enableCORS(handleJoin))
 	port := "8080"
 	fmt.Println("WebSocket Server listening on port", port)
