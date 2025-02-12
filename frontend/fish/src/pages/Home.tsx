@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import React from "react"; 
 
 function Home() {
   const navigate = useNavigate();
@@ -26,21 +27,37 @@ function Home() {
       console.error("Error joining room:", error);
       alert("Error joining room. Try again.");
     }
-  }
+  };
 
   return (
-    <div>
-      <h1>Home Page</h1>
-      <div>
-        <p>Enter room name</p>
+    <div style={styles.container}>
+      <h1 style={styles.title}>Fish Home Page</h1>
+      <div style={styles.formContainer}>
         <input
           type="text"
           value={input}
-          onChange={(e) => setInput(e.target.value)} />
+          onChange={(e) => setInput(e.target.value)}
+          style={styles.input}
+          placeholder="Enter a room to get started"
+        />
+        <button onClick={joinRoom} style={styles.button}>
+          Join Room
+        </button>
       </div>
-      <button onClick={joinRoom}>Go to Room</button>
-    </div >
-  )
+    </div>
+  );
 }
 
 export default Home;
+
+const styles: { [key: string]: React.CSSProperties } = {
+  input: {
+    width: "100%",
+    padding: "0.8rem",
+    fontSize: "1rem",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+    marginBottom: "1rem",
+    outline: "none",
+  },
+};

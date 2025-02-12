@@ -89,7 +89,7 @@ func HandleSocket(w http.ResponseWriter, r *http.Request, ps *PubSub) {
 	fmt.Println("room:", roomName)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("Error ugprading connection", err)
+		fmt.Println("Error upgrading connection", err)
 		return
 	}
 	fmt.Println("Client Connected", conn.RemoteAddr())
