@@ -6,7 +6,8 @@ import { useLocation } from 'react-router';
 function Room() {
   const params = new URLSearchParams(useLocation().search);
   const roomName = params.get("room");
-  const wsURL = `ws://localhost:8080/ws?room=${encodeURIComponent(roomName!)}`;
+  const nickname = params.get("nickname");
+  const wsURL = `ws://localhost:8080/ws?room=${encodeURIComponent(roomName!)}&nickname=${encodeURIComponent(nickname!)}`;
   const { messages, sendMessage } = useWebSocket(wsURL);
   const [input, setInput] = useState("");
   const navigate = useNavigate();
@@ -27,10 +28,11 @@ function Room() {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Room: {roomName}</h1>
+      <h2 style={styles.name}>You: {nickname}</h2> 
       <div style={styles.messagesContainer}>
         <h2 style={styles.subtitle}>Messages</h2>
         <ul style={styles.messagesList}>
-          {messages.map((msg: string, index: number) => (
+          {messages.map((msg:string, index:number) => (
             <li key={index} style={styles.messageItem}>{msg}</li>
           ))}
         </ul>
@@ -112,4 +114,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: "#dc3545",
     marginLeft: "5px"
   },
+  name: {
+    marginRight: "45px"
+  }
 };
