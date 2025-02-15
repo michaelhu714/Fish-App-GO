@@ -10,9 +10,10 @@ import (
 )
 
 type Message struct {
-	Type    string `json:"type"`
-	Content string `json:"content"`
-	Room    string `json:"room"`
+	Type     string `json:"type"`
+	Content  string `json:"content"`
+	Room     string `json:"room"`
+	NickName string `json:"nickname"`
 }
 
 type RoomReq struct {
@@ -21,7 +22,7 @@ type RoomReq struct {
 
 type Room struct {
 	Name    string
-	Clients map[*websocket.Conn]bool
+	Clients map[*websocket.Conn]string
 }
 
 type Event struct {
@@ -86,6 +87,7 @@ func initServer() {
 func HandleSocket(w http.ResponseWriter, r *http.Request, ps *PubSub) {
 	fmt.Println("URL:", r.URL)
 	roomName := r.URL.Query().Get("room")
+	nickname := r.URL.Query().Get("nickname")
 	fmt.Println("room:", roomName)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -93,7 +95,7 @@ func HandleSocket(w http.ResponseWriter, r *http.Request, ps *PubSub) {
 		return
 	}
 	fmt.Println("Client Connected", conn.RemoteAddr())
-	rooms[roomName].Clients[conn] = true
+	rooms[roomName].Clients[conn] = nickname
 	go readLoop(conn, rooms[roomName], ps)
 }
 
@@ -108,6 +110,7 @@ func readLoop(conn *websocket.Conn, room *Room, ps *PubSub) {
 			break
 		}
 		fmt.Printf("LOG: MsgType is %s\n", recievedMsg.Type)
+		recievedMsg.NickName = room.Clients[conn]
 		event := Event{Name: recievedMsg.Type, Room: room, Client: conn, Data: recievedMsg}
 		ps.Publish(event)
 	}
@@ -126,7 +129,7 @@ func HandleChat(ch chan Event) {
 }
 
 func broadcast(msg Message, conn *websocket.Conn, room *Room) {
-	newContent := fmt.Sprintf("%s: %s", conn.RemoteAddr(), msg.Content)
+	newContent := fmt.Sprintf("%s:%s", msg.NickName, msg.Content)
 	newMsg := Message{Type: msg.Type, Content: newContent}
 	for c := range room.Clients {
 		err := c.WriteJSON(newMsg)
@@ -141,7 +144,7 @@ func broadcast(msg Message, conn *websocket.Conn, room *Room) {
 func Join(roomName string) {
 	roomsMutex.Lock()
 	if _, exists := rooms[roomName]; !exists {
-		rooms[roomName] = &Room{Name: roomName, Clients: make(map[*websocket.Conn]bool)}
+		rooms[roomName] = &Room{Name: roomName, Clients: make(map[*websocket.Conn]string)}
 	}
 	roomsMutex.Unlock()
 }
