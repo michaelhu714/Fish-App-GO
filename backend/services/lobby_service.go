@@ -27,3 +27,12 @@ func CreateLobby(name string, owner *models.Player) (*models.Lobby, error) {
 	lobbyIds++
 	return newLobby, nil
 }
+
+func joinLobby(id int, player *models.Player) error {
+	lobby, exists := models.LobbyMgr.Lobbies[id]
+	if !exists {
+		return errors.New("Lobby does not exist")
+	}
+	lobby.Players[player.Id] = player
+	return nil
+}
