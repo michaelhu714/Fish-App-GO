@@ -1,16 +1,20 @@
 package models
 
+import "sync"
+
 type Lobby struct {
 	Id         int
 	Name       string
 	Owner      Player
 	NumPlayers int
-	Players    []Player
+	Players    map[int]*Player
+	Mutex      sync.Mutex
 }
 
 type CreateLobbyReq struct {
 	Name       string `json:"name" validate:"required"`
 	NumPlayers int    `json:"num_players"` // default is 6
+	Owner      Player
 }
 
 type CreateLobbyResp struct {
@@ -28,3 +32,10 @@ type JoinLobbyResp struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
+
+type LobbyManager struct {
+	Lobbies map[int]*Lobby
+	Mutex   sync.Mutex
+}
+
+var LobbyMgr = LobbyManager{Lobbies: make(map[int]*Lobby)}
