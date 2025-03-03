@@ -3,9 +3,9 @@ package models
 import "sync"
 
 type Lobby struct {
-	Id         int
+	ID         int
 	Name       string
-	Owner      Player
+	Owner      *Player
 	NumPlayers int
 	Players    map[int]*Player
 	Mutex      sync.Mutex
@@ -18,18 +18,18 @@ type CreateLobbyReq struct {
 }
 
 type CreateLobbyResp struct {
-	Id    int    `json:"id"`
+	ID    int    `json:"id"`
 	Name  string `json:"name"`
 	Owner Player `json:"owner"`
 }
 
 type JoinLobbyReq struct {
-	Id   int    `json:"id" validate:"required"`
+	ID   int    `json:"id" validate:"required"`
 	Name string `json:"name" validate:"required"`
 }
 
 type JoinLobbyResp struct {
-	Id   int    `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 

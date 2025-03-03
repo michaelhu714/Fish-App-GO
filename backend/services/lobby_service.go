@@ -1,0 +1,29 @@
+package services
+
+import (
+	"errors"
+
+	"github.com/michaelhu714/Fish-App-GO/models"
+)
+
+var lobbyIds = 1
+
+func CreateLobby(name string, owner *models.Player) (*models.Lobby, error) {
+	if name == "" {
+		return nil, errors.New("Error")
+	}
+
+	newLobby := &models.Lobby{
+		ID:      lobbyIds,
+		Name:    name,
+		Owner:   owner,
+		Players: make(map[int]*models.Player),
+	}
+
+	newLobby.Players[owner.Id] = owner
+	models.LobbyMgr.Mutex.Lock()
+	models.LobbyMgr.Lobbies[newLobby.ID] = newLobby
+	models.LobbyMgr.Mutex.Unlock()
+	lobbyIds++
+	return newLobby, nil
+}
