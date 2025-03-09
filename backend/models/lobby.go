@@ -14,7 +14,7 @@ type Lobby struct {
 type CreateLobbyReq struct {
 	Name       string `json:"name" validate:"required"`
 	NumPlayers int    `json:"num_players"` // default is 6
-	Owner      Player
+	OwnerName  string
 }
 
 type CreateLobbyResp struct {

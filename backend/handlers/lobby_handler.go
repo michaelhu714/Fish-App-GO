@@ -16,7 +16,7 @@ func CreateLobby(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var req models.CreateLobbyReq
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(req)
+	err := decoder.Decode(&req)
 	if err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return

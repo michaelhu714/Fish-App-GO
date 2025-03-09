@@ -20,7 +20,7 @@ func CreateLobby(name string, owner *models.Player) (*models.Lobby, error) {
 		Players: make(map[int]*models.Player),
 	}
 
-	newLobby.Players[owner.Id] = owner
+	newLobby.Players[owner.ID] = owner
 	models.LobbyMgr.Mutex.Lock()
 	models.LobbyMgr.Lobbies[newLobby.ID] = newLobby
 	models.LobbyMgr.Mutex.Unlock()
@@ -33,6 +33,6 @@ func joinLobby(id int, player *models.Player) error {
 	if !exists {
 		return errors.New("Lobby does not exist")
 	}
-	lobby.Players[player.Id] = player
+	lobby.Players[player.ID] = player
 	return nil
 }
