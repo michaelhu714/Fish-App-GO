@@ -34,8 +34,9 @@ type JoinLobbyResp struct {
 }
 
 type LobbyManager struct {
-	Lobbies map[int]*Lobby
-	Mutex   sync.Mutex
+	LobbiesById   map[int]*Lobby
+	LobbiesByName map[string]int
+	Mutex         sync.Mutex
 }
 
-var LobbyMgr = LobbyManager{Lobbies: make(map[int]*Lobby)}
+var LobbyMgr = LobbyManager{LobbiesById: make(map[int]*Lobby), LobbiesByName: make(map[string]int)}

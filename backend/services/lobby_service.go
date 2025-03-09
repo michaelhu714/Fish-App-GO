@@ -22,14 +22,15 @@ func CreateLobby(name string, owner *models.Player) (*models.Lobby, error) {
 
 	newLobby.Players[owner.ID] = owner
 	models.LobbyMgr.Mutex.Lock()
-	models.LobbyMgr.Lobbies[newLobby.ID] = newLobby
+	models.LobbyMgr.LobbiesById[newLobby.ID] = newLobby
+	models.LobbyMgr.LobbiesByName[newLobby.Name] = newLobby.ID
 	models.LobbyMgr.Mutex.Unlock()
 	lobbyIds++
 	return newLobby, nil
 }
 
-func joinLobby(id int, player *models.Player) error {
-	lobby, exists := models.LobbyMgr.Lobbies[id]
+func JoinLobby(id int, player *models.Player) error {
+	lobby, exists := models.LobbyMgr.LobbiesById[id]
 	if !exists {
 		return errors.New("Lobby does not exist")
 	}
